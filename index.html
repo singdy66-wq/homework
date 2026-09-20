@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>協和國小一年二班 電子聯絡簿</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: 圓體與手寫感字型適合國小低年級 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Zen Maru Gothic"', '"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            peach: {
+              50: '#fff9f5',
+              100: '#ffede3',
+              200: '#ffd6c4',
+              300: '#f9bca4',
+              400: '#f29778',
+            },
+            board: {
+              frame: '#8C5835',
+              frameDark: '#673e22',
+              surface: '#2b3a33',
+              chalk: '#fffdf5',
+              yellowChalk: '#fef08a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 溫暖水彩背景紋理漸層 */
+    body {
+      background: radial-gradient(circle at 50% 20%, #fff4ec 0%, #fae2d5 50%, #f5cbba 100%);
+      min-height: 100vh;
+      color: #33261f;
+      user-select: none;
+    }
+
+    /* 仿木質黑板外框與微陰影 */
+    .wood-frame {
+      background: linear-gradient(135deg, #a76d43 0%, #7d4825 50%, #5d3417 100%);
+      border: 4px solid #573117;
+      box-shadow: 0 15px 30px -5px rgba(88, 48, 23, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    /* 黑板內壁與粉筆感文字 */
+    .chalkboard-bg {
+      background-color: #26382f;
+      background-image: 
+        radial-gradient(circle at 30% 40%, rgba(255,255,255,0.03) 0%, transparent 60%),
+        radial-gradient(circle at 75% 65%, rgba(0,0,0,0.15) 0%, transparent 50%);
+      box-shadow: inset 0 6px 12px rgba(0,0,0,0.45);
+    }
+
+    /* 點陣虛線 */
+    .dashed-chalk-border {
+      border: 2px dashed rgba(253, 240, 138, 0.45);
+    }
+
+    /* 粉筆浮雕微光 */
+    .chalk-text {
+      text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
+    }
+
+    /* 自訂滾動條 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(140, 88, 53, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(140, 88, 53, 0.8);
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 lg:p-8 flex flex-col items-center justify-start min-h-screen relative overflow-x-hidden">
+
+  <!-- 右上方手繪風壁鐘與暖黃吊燈 -->
+  <div class="fixed top-0 right-10 sm:right-24 z-10 pointer-events-none flex items-start gap-4">
+    <!-- 吊燈 -->
+    <div class="flex flex-col items-center">
+      <div class="w-0.5 h-10 sm:h-16 bg-[#b27244]"></div>
+      <div class="w-16 h-8 bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] rounded-t-full shadow-lg relative">
+        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-yellow-200 rounded-full blur-[2px] opacity-80"></div>
+      </div>
+    </div>
+    <!-- 暖色時鐘 -->
+    <div class="mt-8 hidden sm:flex flex-col items-center">
+      <div class="w-14 h-14 rounded-full bg-[#fde8dc] border-4 border-[#c87654] shadow-md flex items-center justify-center relative">
+        <div class="w-1.5 h-1.5 rounded-full bg-[#8c4327]"></div>
+        <div class="absolute w-0.5 h-4 bg-[#8c4327] -top-1/2 origin-bottom transform rotate-45"></div>
+        <div class="absolute w-0.5 h-3 bg-[#c87654] -top-1/2 origin-bottom transform rotate-[210deg]"></div>
+        <span class="absolute top-1 text-[8px] font-bold text-[#c87654]">12</span>
+        <span class="absolute right-1 text-[8px] font-bold text-[#c87654]">3</span>
+        <span class="absolute bottom-1 text-[8px] font-bold text-[#c87654]">6</span>
+        <span class="absolute left-1 text-[8px] font-bold text-[#c87654]">9</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="w-full max-w-7xl mb-3 flex flex-wrap items-center justify-between gap-3 px-2 z-20">
+    <div class="flex items-center gap-3">
+      <!-- 學校班級標章 -->
+      <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-900/20">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl sm:text-2xl font-black tracking-wide text-[#5c3116]">協和國小 一年二班 電子聯絡簿</h1>
+          <span class="hidden md:inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f3d3be] text-[#7d3b19]">102 幸福城堡</span>
+        </div>
+        <p class="text-xs sm:text-sm font-semibold text-[#8e5a3c]">XIE HE ELEMENTARY SCHOOL • CLASS 102</p>
+      </div>
+    </div>
+
+    <!-- 頂部即時時鐘與操作按鈕 -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- 即時時間 -->
+      <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-white/70 backdrop-blur rounded-xl border border-amber-200 shadow-sm text-sm font-bold text-[#6a3c1f]">
+        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span id="liveCurrentTime">--:--:--</span>
+      </div>
+
+      <!-- 全螢幕投影按鈕 -->
+      <button onclick="openFullscreenModal()" class="px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 text-xs sm:text-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+        <span>全螢幕抄寫</span>
+      </button>
+
+      <!-- 登入管理按鈕 -->
+      <button onclick="openAdminModal()" class="px-3 sm:px-4 py-2 bg-[#704225] hover:bg-[#5b3219] text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 text-xs sm:text-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        <span>聯絡簿管理</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-7xl wood-frame rounded-3xl p-3 sm:p-5 relative shadow-2xl z-10 mb-12">
+    <!-- 木框四個角落的銅質圓螺絲釘裝飾（參考上傳原圖） -->
+    <div class="absolute top-2 left-2 w-3.5 h-3.5 rounded-full bg-[#462713] border border-[#d29b71] shadow-inner"></div>
+    <div class="absolute top-2 right-2 w-3.5 h-3.5 rounded-full bg-[#462713] border border-[#d29b71] shadow-inner"></div>
+    <div class="absolute bottom-10 left-2 w-3.5 h-3.5 rounded-full bg-[#462713] border border-[#d29b71] shadow-inner"></div>
+    <div class="absolute bottom-10 right-2 w-3.5 h-3.5 rounded-full bg-[#462713] border border-[#d29b71] shadow-inner"></div>
+
+    <!-- 黑板本體 -->
+    <div class="chalkboard-bg rounded-2xl p-3 sm:p-6 text-white min-h-[580px] grid grid-cols-1 lg:grid-cols-12 gap-5">
+      
+      <div class="lg:col-span-8 flex flex-col gap-4">
+
+        <!-- 區塊一：重要文件與班級資源 -->
+        <div class="dashed-chalk-border rounded-xl p-3.5 sm:p-4 bg-white/5 backdrop-blur-sm">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">📁</span>
+              <h2 class="text-amber-300 font-bold text-base sm:text-lg tracking-wider">一年二班 班級常用資源</h2>
+            </div>
+            <span class="text-[11px] text-emerald-300/80 font-medium">低年級常用連結</span>
+          </div>
+
+          <!-- 快速按鈕卡片組 -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs sm:text-sm" id="resourceLinksContainer">
+            <a href="javascript:void(0)" onclick="openResourceModal('classTimetable')" class="p-2 bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-500/30 rounded-lg flex items-center gap-1.5 transition text-emerald-100 hover:text-white">
+              <span>📅</span>
+              <span class="font-medium truncate">一二班功課表</span>
+            </a>
+            <a href="javascript:void(0)" onclick="openResourceModal('lunchMenu')" class="p-2 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/30 rounded-lg flex items-center gap-1.5 transition text-amber-100 hover:text-white">
+              <span>🍱</span>
+              <span class="font-medium truncate">本週營養午餐</span>
+            </a>
+            <a href="javascript:void(0)" onclick="openResourceModal('notices')" class="p-2 bg-sky-950/40 hover:bg-sky-900/60 border border-sky-500/30 rounded-lg flex items-center gap-1.5 transition text-sky-100 hover:text-white">
+              <span>📑</span>
+              <span class="font-medium truncate">重要通知單下載</span>
+            </a>
+            <a href="javascript:void(0)" onclick="openResourceModal('photoAlbum')" class="p-2 bg-purple-950/40 hover:bg-purple-900/60 border border-purple-500/30 rounded-lg flex items-center gap-1.5 transition text-purple-100 hover:text-white">
+              <span>📸</span>
+              <span class="font-medium truncate">班級精彩相簿</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 區塊二：今日聯絡簿主體內容 -->
+        <div class="dashed-chalk-border rounded-xl p-4 sm:p-5 bg-white/5 backdrop-blur-sm flex-1 flex flex-col justify-between">
+          <div>
+            <!-- 聯絡簿標題與日期列 -->
+            <div class="flex flex-wrap items-center justify-between pb-3 border-b border-yellow-200/20 gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📖</span>
+                <h2 class="text-yellow-300 font-extrabold text-lg sm:text-xl tracking-wide">今日交代功課</h2>
+                <div class="px-2.5 py-0.5 rounded-md bg-black/40 text-yellow-200 text-xs border border-yellow-400/30 font-bold" id="displayMinguoDate">
+                  民國 115/09/21 (一)
+                </div>
+              </div>
+
+              <!-- 狀態與瀏覽人次 -->
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-stone-300 hidden sm:inline" id="lastUpdatedText">最後更新：115/09/21 16:30</span>
+                <span class="px-2 py-0.5 rounded bg-blue-700/80 border border-blue-400/40 text-blue-100 font-semibold flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  瀏覽: <span id="viewCountBadge">18</span> 次
+                </span>
+              </div>
+            </div>
+
+            <!-- 條列作業事項 (針對低年級放大字體與增加核對方塊) -->
+            <div class="mt-4 space-y-3.5 text-base sm:text-lg" id="homeworkListContainer">
+              <!-- 動態由 JavaScript 載入 -->
+            </div>
+
+            <!-- @ 符號生活叮嚀事項 -->
+            <div class="mt-5 pt-3 border-t border-dashed border-stone-600/60 space-y-1.5 text-sm sm:text-base text-yellow-100" id="notesListContainer">
+              <!-- 動態由 JavaScript 載入 -->
+            </div>
+          </div>
+
+          <!-- 底部署名 -->
+          <div class="mt-6 pt-2 flex items-center justify-between text-xs text-stone-400">
+            <span class="flex items-center gap-1 text-emerald-300/90 font-medium">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              小朋友寫完聯絡簿，可點擊方塊打勾核對喔！
+            </span>
+            <span id="publisherText">發布者：一年二班 導師 林老師</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="lg:col-span-4 flex flex-col gap-4">
+        
+        <!-- 月曆卡片 (仿原圖黃底月曆設計) -->
+        <div class="bg-amber-500 rounded-2xl p-4 text-[#432311] shadow-md flex flex-col">
+          <!-- 月份切換標題 -->
+          <div class="flex items-center justify-between mb-3 px-1">
+            <button onclick="changeMonth(-1)" class="p-1 hover:bg-amber-600/30 rounded-lg transition" title="上個月">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <h3 class="text-lg font-black tracking-wider" id="calendarMonthTitle">115年 9月</h3>
+            <button onclick="changeMonth(1)" class="p-1 hover:bg-amber-600/30 rounded-lg transition" title="下個月">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- 星期欄頭 -->
+          <div class="grid grid-cols-7 text-center text-xs font-bold text-[#5c3017] mb-2">
+            <span class="text-rose-800">日</span>
+            <span>一</span>
+            <span>二</span>
+            <span>三</span>
+            <span>四</span>
+            <span>五</span>
+            <span class="text-rose-800">六</span>
+          </div>
+
+          <!-- 日期網格 -->
+          <div class="grid grid-cols-7 gap-1 text-center font-bold text-sm" id="calendarDaysGrid">
+            <!-- 動態生成日曆 -->
+          </div>
+
+          <!-- 圖例標示 -->
+          <div class="mt-4 pt-2.5 border-t border-amber-600/40 text-[11px] text-[#552e18] flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#fde047] border border-amber-800 inline-block"></span>
+              <span>表示當日有聯絡簿</span>
+            </div>
+            <span class="text-[10px] opacity-80">點選日期看歷史</span>
+          </div>
+        </div>
+
+        <!-- 小一生活提醒卡片 (低年級專屬實用功能) -->
+        <div class="dashed-chalk-border rounded-xl p-3.5 bg-black/20 text-xs sm:text-sm text-stone-200 space-y-2.5 flex-1">
+          <div class="flex items-center justify-between text-yellow-300 font-bold border-b border-yellow-200/20 pb-1.5">
+            <span class="flex items-center gap-1">🎒 明日上學提醒</span>
+            <span class="text-xs text-amber-200" id="tomorrowDayLabel">明日(二) 讀整天</span>
+          </div>
+          
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+              <span class="text-base">👕</span>
+              <div>
+                <p class="font-bold text-emerald-300">服裝著裝：運動服</p>
+                <p class="text-[11px] text-stone-300">明日有體育課，請穿著好活動的布鞋</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+              <span class="text-base">🍴</span>
+              <div>
+                <p class="font-bold text-amber-300">餐袋與潔牙水杯</p>
+                <p class="text-[11px] text-stone-300">讀整天下午需在校用餐，請帶三個碗匙</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+              <span class="text-base">🔔</span>
+              <div>
+                <p class="font-bold text-sky-300">放學時間：15:40</p>
+                <p class="text-[11px] text-stone-300">請家長準時於校門口第一接送區等候</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 黑板下方木質粉筆溝槽 + 彩色粉筆與板擦 -->
+    <div class="w-full h-8 mt-1.5 bg-[#42220d] rounded-b-xl border-t border-[#6f3e1b] flex items-center justify-between px-6 relative">
+      <!-- 左側放置彩色粉筆 -->
+      <div class="flex items-center gap-2">
+        <!-- 白粉筆 -->
+        <div class="w-9 h-3 rounded-full bg-stone-100 shadow-inner transform -rotate-2"></div>
+        <!-- 粉紅粉筆 -->
+        <div class="w-10 h-3 rounded-full bg-pink-300 shadow-inner transform rotate-1"></div>
+        <!-- 黃粉筆 -->
+        <div class="w-8 h-3 rounded-full bg-amber-200 shadow-inner transform -rotate-1"></div>
+        <!-- 藍粉筆 -->
+        <div class="w-11 h-3 rounded-full bg-sky-300 shadow-inner transform rotate-3"></div>
+      </div>
+      <!-- 右側板擦 -->
+      <div class="w-16 h-4 bg-[#8b5a2b] rounded border-b-2 border-stone-800 shadow flex items-center justify-center">
+        <div class="w-14 h-1 bg-[#d7c4b7] rounded-full"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 左下角盆栽 (參考圖片一水彩植物) -->
+  <div class="fixed bottom-0 left-2 sm:left-6 z-20 pointer-events-none w-28 sm:w-40 md:w-48">
+    <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto drop-shadow-md">
+      <!-- 陶盆 -->
+      <path d="M70 170 L130 170 L120 230 L80 230 Z" fill="#d97757"/>
+      <path d="M65 160 L135 160 L130 172 L70 172 Z" fill="#b9583b"/>
+      <!-- 植物葉片 (具水彩透光質感的疊色) -->
+      <path d="M100 165 C100 120 70 80 40 70 C55 100 65 140 100 165 Z" fill="#8bc34a" fill-opacity="0.85"/>
+      <path d="M100 160 C100 110 130 70 165 65 C150 95 135 130 100 160 Z" fill="#aed581" fill-opacity="0.9"/>
+      <path d="M95 160 C85 100 45 120 25 110 C50 130 80 145 95 160 Z" fill="#7cb342" fill-opacity="0.8"/>
+      <path d="M102 165 C115 110 160 120 180 110 C155 130 120 150 102 165 Z" fill="#9ccc65" fill-opacity="0.85"/>
+      <path d="M100 150 C95 80 100 30 100 20 C105 50 108 100 100 150 Z" fill="#c5e1a5" fill-opacity="0.9"/>
+      <path d="M100 155 C90 120 75 95 60 90 C75 110 85 130 100 155 Z" fill="#689f38" fill-opacity="0.8"/>
+      <path d="M100 155 C110 120 125 95 140 90 C125 110 115 130 100 155 Z" fill="#8bc34a" fill-opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- 右下角認真寫作業的小女孩 (精緻手繪感向量 SVG 忠實還原圖片特色) -->
+  <div class="fixed bottom-0 right-2 sm:right-6 z-20 pointer-events-none w-36 sm:w-56 md:w-64">
+    <svg viewBox="0 0 240 260" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto drop-shadow-xl">
+      <!-- 頭髮後層 -->
+      <path d="M40 180 C20 100 60 20 130 20 C200 20 230 90 220 180 C210 210 180 230 160 230 C120 230 60 220 40 180 Z" fill="#374151"/>
+      
+      <!-- 身體/黃色毛衣 (溫暖芥末黃) -->
+      <path d="M80 190 Q130 160 180 190 L195 260 L65 260 Z" fill="#fbb040"/>
+      <!-- 毛衣高領口 -->
+      <path d="M105 170 Q130 160 155 170 Q130 185 105 170 Z" fill="#e59828"/>
+      
+      <!-- 臉部膚色 -->
+      <ellipse cx="130" cy="115" rx="55" ry="50" fill="#fde2d2"/>
+      
+      <!-- 溫柔劉海 -->
+      <path d="M80 75 C100 100 150 95 175 75 C190 100 185 130 185 130 C185 130 180 85 130 75 C85 85 80 130 80 130 Z" fill="#2d3748"/>
+      
+      <!-- 雙頰腮紅 -->
+      <ellipse cx="98" cy="125" rx="9" ry="6" fill="#f87171" fill-opacity="0.35"/>
+      <ellipse cx="162" cy="125" rx="9" ry="6" fill="#f87171" fill-opacity="0.35"/>
+      
+      <!-- 圓圓眼鏡鏡框 -->
+      <circle cx="102" cy="115" r="19" stroke="#5d3923" stroke-width="3.5" fill="white" fill-opacity="0.2"/>
+      <circle cx="158" cy="115" r="19" stroke="#5d3923" stroke-width="3.5" fill="white" fill-opacity="0.2"/>
+      <!-- 眼鏡橫樑 -->
+      <path d="M121 113 Q130 110 139 113" stroke="#5d3923" stroke-width="3.5" stroke-linecap="round"/>
+      
+      <!-- 眼睛 (專注微笑的大眼睛) -->
+      <circle cx="105" cy="115" r="5" fill="#292524"/>
+      <circle cx="103" cy="113" r="1.5" fill="white"/>
+      <circle cx="155" cy="115" r="5" fill="#292524"/>
+      <circle cx="153" cy="113" r="1.5" fill="white"/>
+      
+      <!-- 微笑小嘴與小鼻子 -->
+      <path d="M130 120 L130 124" stroke="#d97757" stroke-width="2" stroke-linecap="round"/>
+      <path d="M125 133 Q130 138 135 133" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round"/>
+      
+      <!-- 手腕托腮與拿筆姿勢 -->
+      <path d="M165 140 Q175 160 170 180" stroke="#fde2d2" stroke-width="12" stroke-linecap="round"/>
+      <!-- 小手握著作業本 -->
+      <path d="M90 220 Q130 200 170 220 L180 260 L80 260 Z" fill="#fffbf0" stroke="#d5c8ba" stroke-width="2"/>
+      <!-- 作業本上的小方格與愛心貼紙 -->
+      <rect x="100" y="225" width="20" height="25" fill="#fde8dc" rx="2"/>
+      <path d="M145 228 C145 225 148 223 151 225 C154 223 157 225 157 228 C157 232 151 236 151 236 C151 236 145 232 145 228 Z" fill="#f43f5e"/>
+      <!-- 藍色鉛筆 -->
+      <path d="M120 220 L110 195" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- 全螢幕投影抄寫模式 Modal -->
+  <div id="fullscreenModal" class="fixed inset-0 bg-[#1e2d26] z-50 hidden flex-col p-4 sm:p-8 overflow-y-auto">
+    <!-- 全螢幕上方工具列 -->
+    <div class="flex items-center justify-between border-b border-amber-300/30 pb-4 mb-4">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl text-yellow-300">📺</span>
+        <h2 class="text-xl sm:text-2xl font-black text-amber-200 tracking-wider">協和國小 102 聯絡簿 全螢幕展示抄寫模式</h2>
+      </div>
+
+      <!-- 右側工具控制區 -->
+      <div class="flex items-center gap-3">
+        <!-- 巨大時鐘顯示（配合原圖 14:39:01 風格） -->
+        <div class="text-2xl sm:text-3xl font-black text-amber-400 font-mono tracking-widest px-3 py-1 bg-black/40 rounded-xl border border-amber-500/30" id="fullscreenClock">
+          14:39:01
+        </div>
+
+        <!-- 切換單日/雙日並列 -->
+        <button onclick="toggleDisplayColumns()" id="colToggleBtn" class="px-3 sm:px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl font-bold flex items-center gap-1.5 text-xs sm:text-sm shadow transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          <span id="colToggleText">切換今日/雙日並列</span>
+        </button>
+
+        <!-- 關閉按鈕 -->
+        <button onclick="closeFullscreenModal()" class="px-3 sm:px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white rounded-xl font-bold flex items-center gap-1 text-xs sm:text-sm shadow transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <span>離開展示</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 投影主內容展示區 (支援單日或像原圖左右兩日並列展示) -->
+    <div id="fullscreenCardsWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 items-start">
+      <!-- 今日聯絡簿卡片 -->
+      <div class="dashed-chalk-border rounded-2xl p-6 bg-black/30 text-white">
+        <div class="flex items-center justify-between pb-3 border-b border-yellow-300/30 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">📝</span>
+            <span class="text-xl sm:text-2xl font-black text-yellow-300" id="fsTodayTitle">115/09/21 (一) 今日作業</span>
+          </div>
+          <span class="text-stone-300 text-sm">發布者：導師</span>
+        </div>
+        <div class="space-y-4 text-xl sm:text-2xl" id="fsTodayHomeworkList">
+          <!-- 投影列表內容 -->
+        </div>
+        <div class="mt-6 pt-4 border-t border-dashed border-stone-600 text-base sm:text-lg text-amber-200 space-y-2" id="fsTodayNotesList">
+          <!-- 生活叮嚀 -->
+        </div>
+      </div>
+
+      <!-- 次日預告 / 昨日對照卡片 (可切換隱藏) -->
+      <div id="fsTomorrowCard" class="dashed-chalk-border rounded-2xl p-6 bg-black/30 text-white">
+        <div class="flex items-center justify-between pb-3 border-b border-yellow-300/30 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🌟</span>
+            <span class="text-xl sm:text-2xl font-black text-yellow-300" id="fsTomorrowTitle">115/09/22 (二) 明日預備</span>
+            <span class="px-2 py-0.5 rounded bg-pink-700 text-xs text-white font-bold">預告</span>
+          </div>
+          <span class="text-stone-300 text-sm">發布者：導師</span>
+        </div>
+        <div class="space-y-4 text-xl sm:text-2xl" id="fsTomorrowHomeworkList">
+          <!-- 次日作業 -->
+        </div>
+        <div class="mt-6 pt-4 border-t border-dashed border-stone-600 text-base sm:text-lg text-amber-200 space-y-2" id="fsTomorrowNotesList">
+          <!-- 次日叮嚀 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 聯絡簿管理後台 Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="bg-[#fef8f3] rounded-3xl w-full max-w-2xl p-5 sm:p-7 shadow-2xl border-4 border-[#8c5835] max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b-2 border-amber-200">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">👩‍🏫</span>
+          <h2 class="text-xl font-bold text-[#5c3116]">老師編輯聯絡簿（一年二班）</h2>
+        </div>
+        <button onclick="closeAdminModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold">✕</button>
+      </div>
+
+      <div class="mt-4 space-y-4">
+        <!-- 選擇編輯日期 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">編輯日期 (西元)</label>
+            <input type="date" id="adminDateInput" class="w-full px-3 py-2 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">發布者稱謂</label>
+            <input type="text" id="adminAuthorInput" value="一年二班 導師 林老師" class="w-full px-3 py-2 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+          </div>
+        </div>
+
+        <!-- 作業清單項目編輯 -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-bold text-stone-700">作業與待辦事項 (建議4~6項)</label>
+            <button onclick="addAdminHomeworkRow()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1">
+              <span>＋ 新增一項</span>
+            </button>
+          </div>
+          <div id="adminHomeworkRows" class="space-y-2">
+            <!-- 動態列 -->
+          </div>
+        </div>
+
+        <!-- @ 叮嚀事項編輯 -->
+        <div>
+          <label class="block text-sm font-bold text-stone-700 mb-1">班級生活叮嚀 (每行一條，以 @ 開頭)</label>
+          <textarea id="adminNotesInput" rows="3" class="w-full p-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm" placeholder="@明天星期二讀整天，請帶餐具與水壺。&#10;@安親班依常規路線排隊集合。"></textarea>
+        </div>
+
+        <!-- 儲存與預設按鈕 -->
+        <div class="flex items-center justify-between pt-3 border-t border-stone-200">
+          <button onclick="resetToDefaultData()" class="px-4 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-xl text-xs font-bold transition">
+            重設回示範資料
+          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="closeAdminModal()" class="px-4 py-2 bg-stone-300 hover:bg-stone-400 text-stone-800 rounded-xl text-xs font-bold transition">
+              取消
+            </button>
+            <button onclick="saveAdminData()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md transition">
+              儲存並發布
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 資源檢視 Modal (課表、菜單等) -->
+  <div id="resourceModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="bg-white rounded-3xl w-full max-w-xl p-5 sm:p-6 shadow-2xl border-4 border-amber-300">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <h3 class="text-lg font-bold text-[#5c3116]" id="resourceModalTitle">資源查看</h3>
+        <button onclick="closeResourceModal()" class="text-stone-400 hover:text-stone-600 text-xl font-bold">✕</button>
+      </div>
+      <div class="mt-4" id="resourceModalContent">
+        <!-- 動態塞入內容 -->
+      </div>
+      <div class="mt-5 text-right">
+        <button onclick="closeResourceModal()" class="px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold hover:bg-amber-700">關閉視窗</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastMessage" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900/90 text-white px-5 py-2.5 rounded-2xl text-sm font-bold shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+    <span id="toastIcon">✨</span>
+    <span id="toastText">訊息通知</span>
+  </div>
+
+  <script>
+    // 預設示範資料 (民國 115 年 / 2026 年)
+    const DEFAULT_DATA = {
+      "2026-09-21": {
+        dateStr: "115/09/21 (一)",
+        updatedTime: "115/09/21 16:30",
+        author: "一年二班 導師 林老師",
+        views: 24,
+        items: [
+          { tag: "國語", tagColor: "bg-blue-600", text: "甲本第 1~3 頁生字練習。" },
+          { tag: "數學", tagColor: "bg-emerald-600", text: "數學習作第 4~5 頁。" },
+          { tag: "學用品", tagColor: "bg-amber-600", text: "明天帶彩色筆、粉蠟筆與剪刀。" },
+          { tag: "重要", tagColor: "bg-rose-600", text: "發下流感疫苗接種意願書，請家長簽名。" },
+          { tag: "閱讀", tagColor: "bg-purple-600", text: "閱讀班級繪本 1 本，並於閱讀護照記錄。" }
+        ],
+        notes: [
+          "@明天星期二讀整天，請帶餐具與水壺。",
+          "@第二節大下課為全校防災避難預演，請穿球鞋。",
+          "@課後安親班依常規路線排隊集合出校門。"
+        ]
+      },
+      "2026-09-22": {
+        dateStr: "115/09/22 (二)",
+        updatedTime: "115/09/22 08:30",
+        author: "一年二班 導師 林老師",
+        views: 12,
+        items: [
+          { tag: "國語", tagColor: "bg-blue-600", text: "乙本第 4~6 頁生詞抄寫。" },
+          { tag: "生活", tagColor: "bg-teal-600", text: "觀察校園小樹並畫在生活筆記本。" },
+          { tag: "叮嚀", tagColor: "bg-indigo-600", text: "明早 7:50 前到校晨讀。" },
+          { tag: "簽名", tagColor: "bg-rose-600", text: "國語第一單元評量卷簽名訂正。" }
+        ],
+        notes: [
+          "@明天星期三為便服日，請配戴名牌。",
+          "@明天中午 12:00 放學，不需帶餐盒。"
+        ]
+      },
+      "2026-09-23": {
+        dateStr: "115/09/23 (三)",
+        updatedTime: "115/09/23 11:30",
+        author: "一年二班 導師 林老師",
+        views: 9,
+        items: [
+          { tag: "國語", tagColor: "bg-blue-600", text: "念讀課文第一課 3 遍給家長聽。" },
+          { tag: "數學", tagColor: "bg-emerald-600", text: "完成數學習作第 6 頁。" },
+          { tag: "學用品", tagColor: "bg-amber-600", text: "帶跳繩一條(體育課要用)。" }
+        ],
+        notes: [
+          "@週四正常讀半天，12:40 放學。"
+        ]
+      }
+    };
+
+    // 全域變數狀態
+    let appData = {};
+    let selectedDate = "2026-09-21";
+    let calendarCurrentDate = new Date(2026, 8, 21); // 2026年9月
+    let isSplitDisplay = true;
+
+    function initApp() {
+      // 讀取 localStorage 或初始化
+      const stored = localStorage.getItem("xiehe_102_homework_data");
+      if (stored) {
+        try {
+          appData = JSON.parse(stored);
+        } catch (e) {
+          appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+      } else {
+        appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        saveToLocalStorage();
+      }
+
+      // 增加瀏覽次數
+      if (appData[selectedDate]) {
+        appData[selectedDate].views = (appData[selectedDate].views || 0) + 1;
+        saveToLocalStorage();
+      }
+
+      renderMainHomework();
+      renderCalendar();
+      startClocks();
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem("xiehe_102_homework_data", JSON.stringify(appData));
+    }
+
+    function renderMainHomework() {
+      const data = appData[selectedDate];
+      const listContainer = document.getElementById("homeworkListContainer");
+      const notesContainer = document.getElementById("notesListContainer");
+      const minguoDateElem = document.getElementById("displayMinguoDate");
+      const updatedText = document.getElementById("lastUpdatedText");
+      const viewBadge = document.getElementById("viewCountBadge");
+      const publisherText = document.getElementById("publisherText");
+
+      if (!data) {
+        minguoDateElem.innerText = formatMinguo(selectedDate);
+        updatedText.innerText = "目前尚無發布資訊";
+        viewBadge.innerText = "0";
+        listContainer.innerHTML = `
+          <div class="py-8 text-center text-amber-200/70">
+            <span class="text-3xl block mb-2">🏖️</span>
+            <p class="text-lg">本日尚無作業交代事項或放假中</p>
+            <p class="text-xs text-stone-400 mt-1">點擊右側日曆有圓點標記的日期查看功課</p>
+          </div>
+        `;
+        notesContainer.innerHTML = "";
+        return;
+      }
+
+      // 更新基本欄位
+      minguoDateElem.innerText = data.dateStr || formatMinguo(selectedDate);
+      updatedText.innerText = `最後更新：${data.updatedTime || '--'}`;
+      viewBadge.innerText = data.views || 1;
+      publisherText.innerText = `發布者：${data.author || '一年二班 導師'}`;
+
+      // 渲染條列作業
+      listContainer.innerHTML = data.items.map((item, index) => {
+        return `
+          <div class="flex items-start gap-2.5 sm:gap-3 group">
+            <button onclick="toggleCheckItem(this)" class="mt-1 w-6 h-6 rounded-md border-2 border-yellow-300/60 bg-black/30 flex items-center justify-center hover:bg-yellow-300/20 transition flex-shrink-0" title="點擊打勾核對">
+              <svg class="w-4 h-4 text-emerald-300 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </button>
+            <div class="flex items-baseline flex-wrap gap-2 flex-1">
+              <span class="text-yellow-300 font-bold text-lg sm:text-xl">${index + 1}.</span>
+              <span class="px-2.5 py-0.5 rounded-lg text-white font-bold text-xs sm:text-sm shadow-sm ${item.tagColor || 'bg-blue-600'}">
+                ${item.tag}
+              </span>
+              <span class="font-medium text-stone-100 homework-text">${item.text}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // 渲染生活叮嚀事項
+      notesContainer.innerHTML = (data.notes || []).map(note => {
+        return `<p class="flex items-start gap-1 font-medium"><span class="text-yellow-400 font-bold">@</span><span>${note.replace(/^@/, '')}</span></p>`;
+      }).join("");
+    }
+
+    // 勾選打勾切換效果 (方便小一生核對)
+    function toggleCheckItem(btn) {
+      const icon = btn.querySelector('.check-icon');
+      const textElem = btn.parentElement.querySelector('.homework-text');
+      if (icon.classList.contains('hidden')) {
+        icon.classList.remove('hidden');
+        btn.classList.add('bg-emerald-800/80', 'border-emerald-400');
+        textElem.classList.add('line-through', 'opacity-60');
+        showToast("🌟 好棒！完成一項功課核對囉！");
+      } else {
+        icon.classList.add('hidden');
+        btn.classList.remove('bg-emerald-800/80', 'border-emerald-400');
+        textElem.classList.remove('line-through', 'opacity-60');
+      }
+    }
+
+    function renderCalendar() {
+      const year = calendarCurrentDate.getFullYear();
+      const month = calendarCurrentDate.getMonth();
+      const minguoYear = year - 1911;
+
+      document.getElementById("calendarMonthTitle").innerText = `${minguoYear}年 ${month + 1}月`;
+
+      const daysGrid = document.getElementById("calendarDaysGrid");
+      daysGrid.innerHTML = "";
+
+      // 該月第一天為星期幾與總天數
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+
+      // 前置空白格
+      for (let i = 0; i < firstDayIndex; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "py-1.5 opacity-0";
+        daysGrid.appendChild(emptyCell);
+      }
+
+      // 日期單元格
+      for (let day = 1; day <= totalDays; day++) {
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const hasData = !!appData[dateKey];
+        const isSelected = dateKey === selectedDate;
+
+        const dayBtn = document.createElement("button");
+        dayBtn.className = `py-1.5 rounded-lg flex flex-col items-center justify-center transition relative ${
+          isSelected 
+            ? 'bg-[#fde047] text-[#42220d] shadow-sm font-black' 
+            : 'hover:bg-amber-400/60 text-[#432311]'
+        }`;
+
+        dayBtn.innerHTML = `
+          <span>${day}</span>
+          ${hasData ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-amber-900' : 'bg-[#fef08a] border border-amber-900'} mt-0.5"></span>` : '<span class="w-1.5 h-1.5 mt-0.5"></span>'}
+        `;
+
+        dayBtn.onclick = () => {
+          selectedDate = dateKey;
+          if (appData[dateKey]) {
+            appData[dateKey].views = (appData[dateKey].views || 0) + 1;
+            saveToLocalStorage();
+          }
+          renderMainHomework();
+          renderCalendar();
+        };
+
+        daysGrid.appendChild(dayBtn);
+      }
+    }
+
+    function changeMonth(delta) {
+      calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function startClocks() {
+      function update() {
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        const timeElem = document.getElementById("liveCurrentTime");
+        const fsClock = document.getElementById("fullscreenClock");
+        if (timeElem) timeElem.innerText = timeStr;
+        if (fsClock) fsClock.innerText = timeStr;
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    function formatMinguo(dateStr) {
+      const [y, m, d] = dateStr.split('-');
+      const minguo = parseInt(y, 10) - 1911;
+      const dayOfWeek = ["日", "一", "二", "三", "四", "五", "六"][new Date(dateStr).getDay()];
+      return `民國 ${minguo}/${m}/${d} (${dayOfWeek})`;
+    }
+
+    function openFullscreenModal() {
+      const modal = document.getElementById("fullscreenModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      populateFullscreenData();
+    }
+
+    function closeFullscreenModal() {
+      const modal = document.getElementById("fullscreenModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function populateFullscreenData() {
+      const todayData = appData[selectedDate] || {
+        dateStr: formatMinguo(selectedDate),
+        items: [{ tag: "無", tagColor: "bg-stone-600", text: "今日無發布作業" }],
+        notes: ["@祝小朋友學習愉快！"]
+      };
+
+      document.getElementById("fsTodayTitle").innerText = `${todayData.dateStr || formatMinguo(selectedDate)} 作業`;
+      
+      const fsTodayList = document.getElementById("fsTodayHomeworkList");
+      fsTodayList.innerHTML = todayData.items.map((it, idx) => `
+        <div class="flex items-start gap-3">
+          <span class="text-yellow-300 font-extrabold">${idx + 1}.</span>
+          <span class="px-3 py-1 rounded-lg text-white font-bold text-base shadow ${it.tagColor || 'bg-blue-600'}">${it.tag}</span>
+          <span class="font-medium text-stone-100">${it.text}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("fsTodayNotesList").innerHTML = (todayData.notes || []).map(n => `
+        <p class="flex items-center gap-1.5"><span class="text-yellow-400 font-bold">@</span>${n.replace(/^@/, '')}</p>
+      `).join("");
+
+      // 次日預告資料
+      const nextDate = getNextDateStr(selectedDate);
+      const tomorrowData = appData[nextDate] || {
+        dateStr: formatMinguo(nextDate),
+        items: [
+          { tag: "預告", tagColor: "bg-pink-600", text: "預備下一單元數學課本與附件。" },
+          { tag: "閱讀", tagColor: "bg-purple-600", text: "自主閱讀童書 15 分鐘。" }
+        ],
+        notes: ["@請依作息準時就寢，明天保持滿滿精神！"]
+      };
+
+      document.getElementById("fsTomorrowTitle").innerText = `${tomorrowData.dateStr || formatMinguo(nextDate)} 預備`;
+      document.getElementById("fsTomorrowHomeworkList").innerHTML = tomorrowData.items.map((it, idx) => `
+        <div class="flex items-start gap-3">
+          <span class="text-yellow-300 font-extrabold">${idx + 1}.</span>
+          <span class="px-3 py-1 rounded-lg text-white font-bold text-base shadow ${it.tagColor || 'bg-blue-600'}">${it.tag}</span>
+          <span class="font-medium text-stone-100">${it.text}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("fsTomorrowNotesList").innerHTML = (tomorrowData.notes || []).map(n => `
+        <p class="flex items-center gap-1.5"><span class="text-yellow-400 font-bold">@</span>${n.replace(/^@/, '')}</p>
+      `).join("");
+    }
+
+    function toggleDisplayColumns() {
+      const tomorrowCard = document.getElementById("fsTomorrowCard");
+      const wrapper = document.getElementById("fullscreenCardsWrapper");
+      const btnText = document.getElementById("colToggleText");
+
+      isSplitDisplay = !isSplitDisplay;
+      if (isSplitDisplay) {
+        tomorrowCard.classList.remove("hidden");
+        wrapper.classList.remove("grid-cols-1");
+        wrapper.classList.add("md:grid-cols-2");
+        btnText.innerText = "切換為單日放大";
+      } else {
+        tomorrowCard.classList.add("hidden");
+        wrapper.classList.remove("md:grid-cols-2");
+        wrapper.classList.add("grid-cols-1");
+        btnText.innerText = "切換為雙日並列";
+      }
+    }
+
+    function getNextDateStr(curDateStr) {
+      const d = new Date(curDateStr);
+      d.setDate(d.getDate() + 1);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function openAdminModal() {
+      document.getElementById("adminDateInput").value = selectedDate;
+      const data = appData[selectedDate] || {
+        author: "一年二班 導師 林老師",
+        items: [
+          { tag: "國語", tagColor: "bg-blue-600", text: "" },
+          { tag: "數學", tagColor: "bg-emerald-600", text: "" },
+          { tag: "學用品", tagColor: "bg-amber-600", text: "" }
+        ],
+        notes: ["@明天星期二讀整天，請帶餐具與水壺。"]
+      };
+
+      document.getElementById("adminAuthorInput").value = data.author || "一年二班 導師 林老師";
+      document.getElementById("adminNotesInput").value = (data.notes || []).join("\n");
+
+      const rowsContainer = document.getElementById("adminHomeworkRows");
+      rowsContainer.innerHTML = "";
+      (data.items || []).forEach(item => addAdminHomeworkRow(item.tag, item.tagColor, item.text));
+
+      document.getElementById("adminModal").classList.remove("hidden");
+    }
+
+    function closeAdminModal() {
+      document.getElementById("adminModal").classList.add("hidden");
+    }
+
+    function addAdminHomeworkRow(tag = "國語", color = "bg-blue-600", text = "") {
+      const container = document.getElementById("adminHomeworkRows");
+      const div = document.createElement("div");
+      div.className = "flex items-center gap-2 bg-stone-100 p-2 rounded-xl border border-stone-200";
+
+      div.innerHTML = `
+        <select class="admin-row-tag px-2 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-bold">
+          <option value="國語|bg-blue-600" ${tag==='國語'?'selected':''}>[國語] 藍色</option>
+          <option value="數學|bg-emerald-600" ${tag==='數學'?'selected':''}>[數學] 綠色</option>
+          <option value="學用品|bg-amber-600" ${tag==='學用品'?'selected':''}>[學用品] 橘黃</option>
+          <option value="重要|bg-rose-600" ${tag==='重要'?'selected':''}>[重要] 紅色</option>
+          <option value="閱讀|bg-purple-600" ${tag==='閱讀'?'selected':''}>[閱讀] 紫色</option>
+          <option value="生活|bg-teal-600" ${tag==='生活'?'selected':''}>[生活] 青色</option>
+          <option value="叮嚀|bg-indigo-600" ${tag==='叮嚀'?'selected':''}>[叮嚀] 靛藍</option>
+        </select>
+        <input type="text" class="admin-row-text flex-1 px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs sm:text-sm font-medium" placeholder="請輸入功課或待辦內容..." value="${text}">
+        <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 font-bold px-2 py-1 rounded">✕</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function saveAdminData() {
+      const dateKey = document.getElementById("adminDateInput").value;
+      if (!dateKey) {
+        showToast("請選擇有效日期！");
+        return;
+      }
+
+      const author = document.getElementById("adminAuthorInput").value.trim() || "導師";
+      const notesRaw = document.getElementById("adminNotesInput").value.split("\n").filter(l => l.trim().length > 0);
+      
+      const rows = document.querySelectorAll("#adminHomeworkRows > div");
+      const items = [];
+      rows.forEach(r => {
+        const [tag, tagColor] = r.querySelector(".admin-row-tag").value.split("|");
+        const text = r.querySelector(".admin-row-text").value.trim();
+        if (text) {
+          items.push({ tag, tagColor, text });
+        }
+      });
+
+      const now = new Date();
+      const mYear = now.getFullYear() - 1911;
+      const timeStr = `${mYear}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+      appData[dateKey] = {
+        dateStr: formatMinguo(dateKey),
+        updatedTime: timeStr,
+        author: author,
+        views: (appData[dateKey] && appData[dateKey].views) || 1,
+        items: items,
+        notes: notesRaw
+      };
+
+      saveToLocalStorage();
+      selectedDate = dateKey;
+      calendarCurrentDate = new Date(dateKey);
+
+      closeAdminModal();
+      renderMainHomework();
+      renderCalendar();
+      showToast("✅ 聯絡簿已成功儲存並同步發布！");
+    }
+
+    function resetToDefaultData() {
+      appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      saveToLocalStorage();
+      closeAdminModal();
+      renderMainHomework();
+      renderCalendar();
+      showToast("🔄 已重設回一年二班示範聯絡簿資料");
+    }
+
+    function openResourceModal(type) {
+      const modal = document.getElementById("resourceModal");
+      const title = document.getElementById("resourceModalTitle");
+      const content = document.getElementById("resourceModalContent");
+
+      if (type === 'classTimetable') {
+        title.innerText = "📅 協和國小一年二班 課程表";
+        content.innerHTML = `
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs sm:text-sm text-center border-collapse border border-amber-300">
+              <thead class="bg-amber-100 font-bold text-amber-900">
+                <tr><th class="border p-1.5">節次</th><th class="border p-1.5">一</th><th class="border p-1.5">二</th><th class="border p-1.5">三</th><th class="border p-1.5">四</th><th class="border p-1.5">五</th></tr>
+              </thead>
+              <tbody class="text-stone-700">
+                <tr><td class="border p-1.5 font-bold">1</td><td class="border">國語</td><td class="border">生活</td><td class="border">國語</td><td class="border">數學</td><td class="border">生活</td></tr>
+                <tr><td class="border p-1.5 font-bold">2</td><td class="border">數學</td><td class="border">體育</td><td class="border">生活</td><td class="border">國語</td><td class="border">國語</td></tr>
+                <tr><td class="border p-1.5 font-bold">3</td><td class="border">生活</td><td class="border">國語</td><td class="border">體育</td><td class="border">生活</td><td class="border">閱讀</td></tr>
+                <tr><td class="border p-1.5 font-bold">4</td><td class="border">生活</td><td class="border">數學</td><td class="border">健康</td><td class="border">生活</td><td class="border">數學</td></tr>
+                <tr class="bg-amber-50 font-bold text-amber-800"><td colspan="6" class="border py-1">午餐與午休 (12:00 ~ 13:30)</td></tr>
+                <tr><td class="border p-1.5 font-bold">5</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border">彈性學習</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border bg-stone-100 text-stone-400">放學</td></tr>
+                <tr><td class="border p-1.5 font-bold">6</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border">生活美勞</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border bg-stone-100 text-stone-400">放學</td></tr>
+                <tr><td class="border p-1.5 font-bold">7</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border">導師時間</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border bg-stone-100 text-stone-400">放學</td><td class="border bg-stone-100 text-stone-400">放學</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-[11px] text-stone-500 mt-2">註：一年級僅週二讀全天（15:40 放學），其餘各日皆為半天（12:00 放學）。</p>
+        `;
+      } else if (type === 'lunchMenu') {
+        title.innerText = "🍱 本週健康營養午餐菜單";
+        content.innerHTML = `
+          <div class="space-y-2 text-xs sm:text-sm">
+            <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200">
+              <span class="font-bold text-amber-900 block">週二（全校在校用餐日）：</span>
+              <p class="text-stone-700 mt-0.5">主食：燕麥五穀飯</p>
+              <p class="text-stone-700">主菜：蜜汁照燒雞腿</p>
+              <p class="text-stone-700">副菜：枸杞炒高麗菜、有機玉米烘蛋</p>
+              <p class="text-stone-700">湯品：玉米蘿蔔排骨湯 ｜ 水果：香蕉</p>
+            </div>
+          </div>
+        `;
+      } else if (type === 'notices') {
+        title.innerText = "📑 重要通知單與班級文件下載";
+        content.innerHTML = `
+          <div class="space-y-2 text-xs sm:text-sm">
+            <div class="p-3 bg-stone-50 rounded-xl flex items-center justify-between border border-stone-200">
+              <div>
+                <p class="font-bold text-stone-800">115學年度第一學期作息時間表</p>
+                <p class="text-[11px] text-stone-500">PDF 檔案 (145 KB)</p>
+              </div>
+              <button onclick="showToast('已開始下載作息時間表')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold">下載</button>
+            </div>
+            <div class="p-3 bg-stone-50 rounded-xl flex items-center justify-between border border-stone-200">
+              <div>
+                <p class="font-bold text-stone-800">流感疫苗接種家長意願書 (電子回條)</p>
+                <p class="text-[11px] text-stone-500">線上表單連結</p>
+              </div>
+              <button onclick="showToast('已開啟意願書表單連結')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold">開啟</button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'photoAlbum') {
+        title.innerText = "📸 一年二班 精彩校園剪影相簿";
+        content.innerHTML = `
+          <div class="text-center py-6">
+            <span class="text-4xl block mb-2">🎈</span>
+            <p class="font-bold text-stone-700">班級開學始業式相簿已建立！</p>
+            <p class="text-xs text-stone-500 mt-1">為保護學童隱私，完整高畫質活動照請點下方進入班級 Google 雲端相簿。</p>
+            <button onclick="showToast('導向至一年二班私密相簿')" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">進入 Google 雲端相簿</button>
+          </div>
+        `;
+      }
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeResourceModal() {
+      document.getElementById("resourceModal").classList.add("hidden");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toastMessage");
+      const text = document.getElementById("toastText");
+      text.innerText = msg;
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "pointer-events-none");
+        toast.classList.remove("opacity-100");
+      }, 2500);
+    }
+
+    // 啟動應用
+    window.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
